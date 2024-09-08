@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* .codex-editor{
+    display: flex;
+    justify-content: start;
+    align-content: center;
+    width: 100%;
+    height: 100%;
+} */
+
+.codex-editor{
+    display: flex;
+    height: 100vh;
+    border: "thick solid blue";
+}

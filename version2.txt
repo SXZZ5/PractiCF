@@ -1,0 +1,25 @@
+this is version 2 of the project.
+--------------------------------
+
+First thing that I want to work on is to use IndexedDB to locally store the Problemset and the user Submissions.
+The issue with that is ki filtering by tags and everything sabkuch mujhe khud implement karna padega. Also, problemset refresh karna meri zimmedaari hogi.
+Submissions ko haan IndexedDb me move karna is going to be trivial. 
+
+Is it worth it to do Problemset processing locally. IndexedDB me sql bhi nahi hai to filtering khud se might be very bad atleast complexity wise.
+
+Not really worth it to this locally. Lets trust the servers to be powerful enought to not be affected by my apps requests.
+
+--------------------------------------------------------------------------
+options for embedding that work with CF:
+1. iframe with sandbox attribute. DOES WORK.
+2. fencedframe DOESNT WORK.
+3. portal does not work at all.
+-----------------------------------------------------------------
+i can technically make 90% of the app offline and turn it into a electron desktop application but then neither would people download and use it, nor will I be able to show live link on my resume.
+
+But you can still implement caching the pset and submissions set right.
+Yes, I can. 
+
+------------------------------------------------------------------------------------------------
+
+
