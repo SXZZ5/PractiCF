@@ -3,7 +3,7 @@ import { onePset } from "./dbops";
 import { useEffect, useState } from "react";
 import './Solve.css'
 import './App.css'
-import { Sidebar } from "flowbite-react";
+import { Sidebar, SidebarItem } from "flowbite-react";
 
 export default function Pset() {
     let params = useParams();
@@ -34,11 +34,18 @@ function ProblemSidebar({ probArr }) {
     const childElement = useOutlet();
     return <div style={{
         display: "flex",
-        gap: "40px",
+        gap: "70px",
     }} id="TopDiv Parent">
-        <Sidebar>
+        <Sidebar style={{
+            display: "flex",
+            borderTop: "inset",
+            borderLeft: "inset",
+            borderRight: "inset",
+            height: "200vh",
+
+        }}>
             <Sidebar.Items>
-            <Sidebar.ItemGroup>
+            <Sidebar.ItemGroup >
             {probArr.map((z) => {
                 ++idvar;
                 return <div key={idvar}>
@@ -51,6 +58,14 @@ function ProblemSidebar({ probArr }) {
             })}
             </Sidebar.ItemGroup>
             </Sidebar.Items>
+            <Sidebar.ItemGroup>
+                <SidebarItem>
+                    <Link to="/">Home</Link>
+                </SidebarItem>
+                <SidebarItem>
+                    <Link to="/solve">Psets</Link>
+                </SidebarItem>
+            </Sidebar.ItemGroup>
             </Sidebar>
         <div style={{
             flexBasis: "8000px",

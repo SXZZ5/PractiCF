@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import EditorJS from "@editorjs/editorjs";
 import { useEffect } from "react";
 import { getNotes, saveNotes } from "./dbops";
+import './App.css'
 
 let editor;
 
@@ -25,21 +26,24 @@ export default function ProblemPage() {
 
     return (
         <div id="Texteditor">
-            <div style={{display: "flex",
+            <div style={{
+                display: "flex",
                 justifyContent: "space-between",
                 margin: "15px"
             }}>
-                <div>hello from problem editor component.</div>
-                <button onClick={() => {
+                <a href={url} target="_blank">
+                <div className="text-4xl">{params.probId}</div> 
+                </a>
+                <button className="button-15" role="button" onClick={() => {
                     sendData(params.probId);
-                }}> Save notes </button>
+                }}> Save notes  </button>
             </div>
             <div id="wrapEditingArea" style={{
                 display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "flex-start",
+                justifyContent: "center",
+                alignItems: "center",
                 flexBasis: "8000px",
-            }}> 
+            }}>
                 <div key={Math.random()} id="editingArea" style={{
                     display: "flex",
                     flexBasis: "8000px",

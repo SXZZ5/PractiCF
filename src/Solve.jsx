@@ -33,7 +33,7 @@ export default function Solvemode() {
         console.log(data);
         return <div>
             <div className="flex text-4xl font-bold flex-wrap justify-center align-center top-11">
-                Currently active Psets.
+               ACTIVE PSETS. 
             </div>
             <div className="sk_solvepage">
                 {data.map((x) => {
