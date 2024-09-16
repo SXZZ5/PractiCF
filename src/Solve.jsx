@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { activePsets } from "./dbops";
+import { activePsets, DeletePset } from "./dbops";
 import { Link } from "react-router-dom";
 import './Solve.css'
 
 
 export default function Solvemode() {
 
+    const [trigger, setTrigger] = useState(false);
     const [data, setData] = useState([]);
     const [isLoading, setisLoading] = useState(true);
 
@@ -23,7 +24,7 @@ export default function Solvemode() {
             .catch((z) => {
                 console.log(z);
             })
-    }, [])
+    }, [trigger])
 
     if (isLoading) {
         return <>
@@ -38,21 +39,30 @@ export default function Solvemode() {
             <div className="sk_solvepage">
                 {data.map((x) => {
                     console.log(x);
-                    return <PsetButton key={x.rangeName} pset={x} />
+                    return <PsetButton key={x.rangeName} pset={x} setTrigger={setTrigger}/>
                 })}
             </div>
         </div>
     }
 }
 
-function PsetButton({ pset }) {
+function PsetButton({ pset, setTrigger }) {
     console.log("Psetbutton called");
     console.log(pset);
-    return <div>
+
+    const handleOnClick = () => {
+        DeletePset(pset.rangeName);
+        setTrigger((prev) => !prev);
+    }
+
+    return <div className="flex flex-wrap gap-1">
         <button className="button-15" role="button">
             <Link to={`/solve/${pset.rangeName}`}>
                 {pset.rangeName}
             </Link>
+        </button>
+        <button className="icon-button" onClick={handleOnClick}>
+            <span class="icon">x</span>
         </button>
     </div>
 }

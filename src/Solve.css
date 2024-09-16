@@ -5,3 +5,28 @@
     height: 100vh;
 }
 
+.icon-button {
+    background-color: #3a3a3c;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-button:hover {
+    background-color: #525252;
+}
+
+.icon {
+    font-size: 24px;
+    color: #f2f2f7;
+}
+
+.icon-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px #ffffff;
+}

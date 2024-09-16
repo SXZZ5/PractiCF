@@ -3,6 +3,7 @@ export function makedb() {
     var promise = new Promise((resolve, reject) => {
         const dbOpenRequest = window.indexedDB.open("SKDB", 1);
         dbOpenRequest.onerror = (event) => {
+            alert("could not open database");
             console.log("could not open idb");
             console.error(event);
             reject(event);
@@ -26,7 +27,6 @@ export function makedb() {
 
 export async function AddPset(rangeName, chosenproblems) {
     const db = await makedb();
-    console.log(db.name);
     const dbtxn = db.transaction(["PSETS"], "readwrite")
     const store = dbtxn.objectStore("PSETS");
 
@@ -52,6 +52,7 @@ export async function AddPset(rangeName, chosenproblems) {
         const CountRequest = store.count();
         let foundCount;
         CountRequest.onerror = (event) => {
+            alert("error loading psets");
             console.log("could not get count");
             console.error(CountRequest.error);
         }
@@ -69,15 +70,31 @@ export async function AddPset(rangeName, chosenproblems) {
                 })
 
                 addRequestObj.onerror = (event) => {
+                    alert("Could not add Pset");
                     console.log("adding pset failed");
                     console.error(addRequestObj.error);
                 }
 
                 addRequestObj.onsuccess = (event) => {
+                    alert("Added Pset succesfully.");
                     console.log("adding pset succeeded");
                 }
             }
         }
+    }
+}
+
+export async function DeletePset(rangeName){
+    const db = await makedb();
+    const dbtxn = db.transaction(["PSETS"], "readwrite");
+    const store = dbtxn.objectStore("PSETS");
+    const deleteRequest = store.delete(rangeName);
+    deleteRequest.onsuccess = (event) => {
+        alert("Deleted PSET successfully");
+    }
+
+    deleteRequest.onerror = (event) => {
+        alert("Could not delete PSET");
     }
 }
 
@@ -90,6 +107,7 @@ export async function activePsets() {
         const store = dbtxn.objectStore("PSETS");
         const getallRequest = store.getAll();
         getallRequest.onerror = (event) => {
+            alert("could not fetch PSET information");
             console.log("could not do the getALL on PSET store");
             console.error(getallRequest.error);
             reject(getallRequest.error);
@@ -113,6 +131,7 @@ export async function onePset(rangeName) {
 
         const getRequest = store.get(rangeName);
         getRequest.onerror = (event) => {
+            alert("could not get this pset's info");
             console.log("oops, couldn't get this pset's info");
             console.log(getRequest.error);
             reject(getRequest.error);
@@ -143,11 +162,13 @@ export async function saveNotes(cid, data) {
 
         putRequest.onerror = (event) => {
 
+            alert("Failed to Save Notes.");
             console.log("could not save data ");
             console.log(putRequest.error);
         }
 
         putRequest.onsuccess = (event) => {
+            alert("Saved Notes Succesfully.");
             console.log("save succesful");
             resolve("success")
         }
@@ -163,6 +184,7 @@ export async function getNotes(cid){
         const store = dbtxn.objectStore("PROBS");
         const countRequest = store.count(cid);
         countRequest.onerror = (event) => {
+            alert("Could not fetch Notes.");
             console.log("could not get the count while attempting to fetch probdata");
             console.error(countRequest.error);
             reject(countRequest.error);
@@ -177,6 +199,7 @@ export async function getNotes(cid){
             } else {
                 const getRequest = store.get(cid);
                 getRequest.onerror = (event) => {
+                    alert("Could Not fetch Notes.")
                     console.log("could not get the data for the problem");
                 }
 

@@ -13,13 +13,14 @@ const getRangeName = (lb, ub) => {
 
 export default function Fetchmode({ modeSetter }) {
     const [chosenproblems, setChosenProblems] = useState([]);
+    const [probsLoading, setProbsLoading] = useState(false);
     const [tagList, setTagList] = useState([]);
 
 
     const HandleOnClick = () => {
         console.log("Fetch clicked");
         setChosenProblems((prev) => []);
-        getStuff(setChosenProblems, tagList);
+        getStuff(setChosenProblems, tagList, setProbsLoading);
     }
 
     return <>
@@ -62,7 +63,7 @@ export default function Fetchmode({ modeSetter }) {
                 AddPset(rangeName, chosenproblems)
             }}> Add this Pset </button>
         </div>
-        <ProbComponent ChosenProbs={chosenproblems} />
+        <ProbComponent ChosenProbs={chosenproblems} probsLoading={probsLoading} />
 
     </>
 }
@@ -133,7 +134,8 @@ function cfSubmissionCaller(queryParams) {
     return PromiseSubmissions;
 }
 
-async function getStuff(setChosenProblems, tagList) {
+async function getStuff(setChosenProblems, tagList, setProbsLoading) {
+    setProbsLoading((prev) => true);
     let data = await cfProblemsCaller(tagList);
     const Problemset = data.result.problems;
     console.log(Problemset);
@@ -147,6 +149,7 @@ async function getStuff(setChosenProblems, tagList) {
 
     const RandomProbs = chooseRandomProbs(Problemset, Submissions);
     console.log(RandomProbs);
+    setProbsLoading((prev) => false)
     setChosenProblems((prev) => {
         console.log("going to set chosenProblems state variable")
         return RandomProbs;
