@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import EditorJS from "@editorjs/editorjs";
 import { useEffect } from "react";
 import { getNotes, saveNotes } from "../idb/dbops";

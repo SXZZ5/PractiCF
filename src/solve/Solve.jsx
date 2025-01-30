@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { activePsets, DeletePset } from "../idb/dbops";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router";
 import './Solve.css'
 
 
@@ -57,12 +57,12 @@ function PsetButton({ pset, setTrigger }) {
 
     return <div className="flex flex-wrap gap-1">
         <button className="button-15" role="button">
-            <Link to={`/solve/${pset.rangeName}`}>
+            <NavLink to={`/solve/${pset.rangeName}`}>
                 {pset.rangeName}
-            </Link>
+            </NavLink>
         </button>
         <button className="icon-button" onClick={handleOnClick}>
-            <span class="icon">x</span>
+            <span className="icon">x</span>
         </button>
     </div>
 }

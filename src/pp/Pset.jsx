@@ -1,4 +1,4 @@
-import { Link, Outlet, useOutlet, useParams } from "react-router-dom"
+import { NavLink, useOutlet, useParams } from "react-router"
 import { onePset } from "../idb/dbops";
 import { useEffect, useState } from "react";
 import '../solve/Solve.css'
@@ -50,9 +50,9 @@ function ProblemSidebar({ probArr }) {
                 ++idvar;
                 return <div key={idvar}>
                     <Sidebar.Item>
-                        <Link to={`./${z.contestId}-${z.index}`}>
+                        <NavLink to={`./${z.contestId}-${z.index}`}>
                             {`${z.contestId}${z.index}`}
-                        </Link>
+                        </NavLink>
                     </Sidebar.Item>
                 </div>
             })}
@@ -60,10 +60,10 @@ function ProblemSidebar({ probArr }) {
             </Sidebar.Items>
             <Sidebar.ItemGroup>
                 <SidebarItem>
-                    <Link to="/">Home</Link>
+                    <NavLink to="/">Home</NavLink>
                 </SidebarItem>
                 <SidebarItem>
-                    <Link to="/solve">Psets</Link>
+                    <NavLink to="/solve">Psets</NavLink>
                 </SidebarItem>
             </Sidebar.ItemGroup>
             </Sidebar>

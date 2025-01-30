@@ -1,26 +1,25 @@
 import { useState } from 'react'
-import { MersenneTwister19937, Random, integer } from 'random-js';
+
 import '../app/App.css'
 import ProbComponent from './ProbComp';
 import TagComponent from './TagComp';
 import { AddPset } from '../idb/dbops';
+import cfProblemsCaller from '../apicalls_utils/cfprobcaller';
+import cfSubmissionCaller from '../apicalls_utils/cfsubcaller';
+import Virtual from '../virtual/virtual';
+import RandomProbFilter from '../apicalls_utils/randomprobfilter';
 
-let rangeName;
-const getRangeName = (lb, ub) => {
-    let str = String(lb) + "-" + String(ub);
-    rangeName = str;
-}
-
-export default function Fetchmode({ modeSetter }) {
+export default function Fetchmode() {
     const [chosenproblems, setChosenProblems] = useState([]);
     const [probsLoading, setProbsLoading] = useState(false);
     const [tagList, setTagList] = useState([]);
+    const [rangeName, setRangeName] = useState("");
 
 
     const HandleOnClick = () => {
         console.log("Fetch clicked");
         setChosenProblems((prev) => []);
-        getStuff(setChosenProblems, tagList, setProbsLoading);
+        getStuff(setChosenProblems, tagList, setProbsLoading, setRangeName);
     }
 
     return <>
@@ -68,73 +67,7 @@ export default function Fetchmode({ modeSetter }) {
     </>
 }
 
-function cfProblemsCaller(queryParams) {
-    console.log("inside cfProblemsCaller");
-    console.log(queryParams);
-    var PromiseProblemset = new Promise((resolve) => {
-        let url = "https://codeforces.com/api/problemset.problems"
-        if (queryParams.length > 0) url += "?tags=";
-        queryParams.forEach((z) => {
-            url += `${z};`
-        })
-        const request = new Request(url, {
-            cache: "force-cache",
-        })
-        fetch(request)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("fetch not succesful");
-                } else {
-                    return response.json();
-                }
-            }).then((jsobj) => {
-                return jsobj;
-            }).then((pset) => {
-                resolve(pset);
-            }).catch((err) => {
-                alert(err);
-            })
-    })
-    console.log(PromiseProblemset);
-    return PromiseProblemset;
-}
-
-function cfSubmissionCaller(queryParams) {
-    var PromiseSubmissions = new Promise((resolve) => {
-        let url = "https://codeforces.com/api/user.status"
-        if (queryParams.length > 0) url += "?";
-        console.log(queryParams)
-        queryParams.forEach((z) => {
-            url += `${z}&`
-        });
-        const request = new Request(url, {
-            cache: "force-cache",
-        });
-
-        fetch(request)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Erro("user submissions fetch failed");
-                } else {
-                    return response.json();
-                }
-            })
-            .then((subs) => {
-                console.log(subs);
-                return subs;
-            })
-            .then((subs) => {
-                resolve(subs);
-            })
-            .catch((err) => {
-                alert(err.message);
-            });
-    })
-
-    return PromiseSubmissions;
-}
-
-async function getStuff(setChosenProblems, tagList, setProbsLoading) {
+async function getStuff(setChosenProblems, tagList, setProbsLoading, setRangeName) {
     setProbsLoading((prev) => true);
     let data = await cfProblemsCaller(tagList);
     const Problemset = data.result.problems;
@@ -147,7 +80,7 @@ async function getStuff(setChosenProblems, tagList, setProbsLoading) {
     const Submissions = subData.result;
     console.log(Submissions);
 
-    const RandomProbs = chooseRandomProbs(Problemset, Submissions);
+    const RandomProbs = RandomProbFilter(Problemset, Submissions, setRangeName);
     console.log(RandomProbs);
     setProbsLoading((prev) => false)
     setChosenProblems((prev) => {
@@ -156,91 +89,3 @@ async function getStuff(setChosenProblems, tagList, setProbsLoading) {
     });
 }
 
-
-function chooseRandomProbs(Problemset, Submissions) {
-    console.log("inside chooseRandomProbs")
-    // Get user input values.
-    let lb = Number(document.getElementById('lb').value);
-    let ub = Number(document.getElementById('ub').value);
-    let cnt = Number(document.getElementById('cnt').value);
-    let roundbound = Number(document.getElementById('roundbound').value);
-    getRangeName(lb, ub);
-
-    // Sanity checks on user input values.
-    if (lb > ub) {
-        alert("bad bounds");
-        return;
-    }
-    else if (lb < 800) {
-        alert("bad bounds");
-        return;
-    } else if (roundbound < 10) {
-        alert("bad roundbound, use 10 or greater");
-        return;
-    }
-
-    // Convert AC Submissions into a hashset having "contestIdIndex" strings.
-    let submissionSet = new Set([]);
-    Submissions.map((z) => {
-        if (z.verdict != "OK") return;
-        const str = String(z.problem.contestId) + String(z.problem.index);
-        submissionSet.add(str)
-    })
-    console.log(submissionSet);
-
-    // Filter Problemset array to have only relevant problems.
-    const probs = Problemset.filter((z) => {
-        if (!("rating" in z)) return false;
-        let value = Number(z.rating);
-        let contest_id = Number(z.contestId);
-        const str = String(z.contestId) + String(z.index);
-        let ok = (lb <= ub);
-        ok = ok && (roundbound >= 10);
-        ok = ok && (value >= lb);
-        ok = ok && (value <= ub);
-        ok = ok && (contest_id >= roundbound);
-        ok = ok && (!submissionSet.has(str));
-        return ok;
-    }).map((z) => {
-        return {
-            contestId: z.contestId,
-            index: z.index,
-            rating: z.rating,
-        }
-    })
-
-    cnt = Math.min(cnt, probs.length);
-
-    let includedSet = new Set([]);
-    const randomProbs = [];
-    const engine = MersenneTwister19937.autoSeed();
-    const distribution = integer(1, probs.length);
-    while (randomProbs.length < cnt) {
-        let idx = distribution(engine);
-        const probObj = probs[idx - 1];
-        const str = String(probObj.contestId) + String(probObj.index);
-        if (includedSet.has(str)) {
-            continue;
-        } else {
-            const tmpobject = {
-                id: randomProbs.length,
-                contestId: probObj.contestId,
-                index: probObj.index,
-                rating: probObj.rating,
-            }
-            randomProbs.push(tmpobject);
-            includedSet.add(str);
-        }
-    }
-
-    console.log(randomProbs);
-
-    if (randomProbs.length == 0) {
-        randomProbs.push({
-            contestId: "fake",
-            index: "fake",
-            rating: "fake",
-        })
-    }
-    return randomProbs;
-}
