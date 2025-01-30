@@ -34,12 +34,12 @@ export default function App(){
 }
 
 function ModeChooseComponent(){
-    return <div class="sk_modeChooseComponent">
+    return <div className="sk_modeChooseComponent">
         <Link to="/fetcher">
-            <button class="button-15" role="button"> Go to fetch mode.</button>
+            <button className="button-15" role="button"> Go to fetch mode.</button>
         </Link>
         <Link to="/solve">
-            <button class="button-15" role="button"> Go to solve mode. </button>
+            <button className="button-15" role="button"> Go to solve mode. </button>
         </Link>
     </div>
 }
